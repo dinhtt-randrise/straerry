@@ -1,8 +1,17 @@
 <html>
 <head>
   <title>Straerry: Offline Knowledge Explorer</title>
+  <script src="jquery-3.7.1.min.js"></script>
+  <script>
+function show_uniqid() {
+  $.get("http://ref.straerry.com/api/uniqid", function(data, status){
+    uid = data['uniqid'];
+    alert('Uniqid: ' + uid);
+  });
+}
+  </script>
 </head>
 <body>
-  
+  <input type="button" value="uniqid" onclick="show_uniqid()" />
 </body>
 </html>

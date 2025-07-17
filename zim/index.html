@@ -15,7 +15,7 @@ function show_uniqid() {
   alert('Showing uniqid');
   try {
     addScript("http://ref.straerry.com/api/uniqid");
-    setTimeout('receive_uniqid()', 30);
+    setTimeout('receive_uniqid()', 60 * 1000);
   } catch (e) {
     alert('[E] ' + e);
   }

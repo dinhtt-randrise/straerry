@@ -32,10 +32,14 @@ function receive_uniqid() {
 
 function check() {
   alert('Loaded');
+  var url = location + '';
+  $('#e-loc').text(url);
 }
   </script>
 </head>
 <body onload="check()">
   <input type="button" value="uniqid" onclick="show_uniqid()" />
+
+  <p id="e-loc"></p>
 </body>
 </html>

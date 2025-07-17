@@ -15,7 +15,7 @@ function show_uniqid() {
   alert('Showing uniqid');
   try {
     addScript("https://takotesai.ngrok.io/straerry/uniqid");
-    setTimeout('receive_uniqid()', 10 * 1000);
+    setTimeout('receive_uniqid()', 60 * 1000);
   } catch (e) {
     alert('[E] ' + e);
   }

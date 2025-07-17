@@ -5,13 +5,18 @@
   <script>
 function show_uniqid() {
   $.get("http://ref.straerry.com/api/uniqid", function(data, status){
+    alert(status + '');
     uid = data['uniqid'];
     alert('Uniqid: ' + uid);
   });
 }
+
+function check() {
+  alert('Loaded');
+}
   </script>
 </head>
-<body>
+<body onload="check()">
   <input type="button" value="uniqid" onclick="show_uniqid()" />
 </body>
 </html>

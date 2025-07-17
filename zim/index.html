@@ -3,16 +3,30 @@
   <title>Straerry: Offline Knowledge Explorer</title>
   <script src="./jquery-3.7.1.min.js"></script>
   <script>
+var UID = false;
+    
+function addScript( src ) {
+  var s = document.createElement( 'script' );
+  s.setAttribute( 'src', src );
+  document.body.appendChild( s );
+}
+    
 function show_uniqid() {
   alert('Showing uniqid');
   try {
-    $.get("http://ref.straerry.com/api/uniqid", function(data, status){
-      alert(status + '');
-      uid = data['uniqid'];
-      alert('Uniqid: ' + uid);
-    });
+    addScript("http://ref.straerry.com/api/uniqid");
+    setTimeout('receive_uniqid()', 30);
   } catch (e) {
     alert('[E] ' + e);
+  }
+}
+
+function receive_uniqid() {
+  if (UID != false) {
+    mid = UID['uniqid'];
+    alert('UID: ' + mid);
+  } else {
+    alert('Failed!');
   }
 }
 

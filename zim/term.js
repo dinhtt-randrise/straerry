@@ -166,8 +166,12 @@ Term.prototype.open = function(parent_el, textarea_el)
     this.term_el.addEventListener("wheel", 
                                   this.wheelHandler.bind(this), false);
     // paste
+    document.defaultView.addEventListener("keydown", 
+                                          this.pasteHandler_keydown.bind(this), true);
     document.defaultView.addEventListener("keyup", 
-                                          this.pasteHandler.bind(this), false);
+                                          this.pasteHandler_keyup.bind(this), true);
+    document.defaultView.addEventListener("keypress", 
+                                          this.pasteHandler_keypress.bind(this), true);
     
     // cursor blinking
     term = this;
@@ -1155,6 +1159,184 @@ Term.prototype.keyPressHandler = function (ev)
     } else {
         return true;
     }
+};
+
+Term.prototype.pasteHandler_keypress = function (ev)
+{
+    var str, char_code;
+
+    if (ev.stopPropagation)
+        ev.stopPropagation();
+    if (ev.preventDefault)
+        ev.preventDefault();
+
+    str="";
+    if (!("charCode" in ev)) {
+        /* on Opera charCode is not defined and keypress is sent for
+         system keys. Moreover, only keupress is repeated which is a
+         problem for system keys. */
+        char_code = ev.keyCode;
+        if (this.key_rep_state == 1) {
+            this.key_rep_state = 2;
+            return false;
+        } else if (this.key_rep_state == 2) {
+            /* repetition */
+            this.show_cursor();
+            this.handler(this.key_rep_str);
+            return false;
+        }
+    } else {
+        char_code = ev.charCode;
+    }
+    if (char_code != 0) {
+        if (!ev.ctrlKey && 
+            ((!this.is_mac && !ev.altKey) ||
+             (this.is_mac && !ev.metaKey))) {
+            str = String.fromCharCode(char_code);
+        }
+    }
+    //    console.log("keypress: keycode=" + ev.keyCode + " charcode=" + ev.charCode + " str=" + str + " ctrl=" + ev.ctrlKey + " alt=" + ev.altKey + " meta=" + ev.metaKey);
+    if (str) {
+        this.show_cursor();
+        if (this.utf8)
+            str = this.to_utf8(str);
+        this.handler(str);
+        return false;
+    } else {
+        return true;
+    }
+};
+
+Term.prototype.pasteHandler_keydown = function (ev)
+{
+    var str;
+
+    this.interceptBrowserExit(ev);
+    
+    str="";
+    switch(ev.keyCode) {
+    case 8: /* backspace */
+        str = "\x7f";
+        break;
+    case 9: /* tab */
+        str = "\x09";
+        break;
+    case 13: /* enter */
+        str = "\x0d";
+        break;
+    case 27: /* escape */
+        str = "\x1b";
+        break;
+    case 37: /* left */
+        if (ev.ctrlKey) {
+            str = "\x1b[1;5D";
+        } else if (this.application_cursor) {
+            str = "\x1bOD";
+        } else {
+            str = "\x1b[D";
+        }
+        break;
+    case 39: /* right */
+        if (ev.ctrlKey) {
+            str = "\x1b[1;5C";
+        } else if (this.application_cursor) {
+            str = "\x1bOC";
+        } else {
+            str = "\x1b[C";
+        }
+        break;
+    case 38: /* up */
+        if (ev.ctrlKey) {
+            this.scroll_disp(-1);
+        } else if (this.application_cursor) {
+            str = "\x1bOA";
+        } else {
+            str = "\x1b[A";
+        }
+        break;
+    case 40: /* down */
+        if (ev.ctrlKey) {
+            this.scroll_disp(1);
+        } else if (this.application_cursor) {
+            str = "\x1bOB";
+        } else {
+            str = "\x1b[B";
+        }
+        break;
+    case 46: /* delete */
+        str = "\x1b[3~";
+        break;
+    case 45: /* insert */
+        str = "\x1b[2~";
+        break;
+    case 36: /* home */
+        if (this.linux_console)
+            str = "\x1b[1~";
+        else if (this.application_keypad)
+            str = "\x1bOH";
+        else
+            str = "\x1b[H";
+        break;
+    case 35: /* end */
+        if (this.linux_console)
+            str = "\x1b[4~";
+        else if (this.application_keypad)
+            str = "\x1bOF";
+        else
+            str = "\x1b[F";
+        break;
+    case 33: /* page up */
+        if (ev.ctrlKey) {
+            this.scroll_disp(-(this.h - 1));
+        } else {
+            str = "\x1b[5~";
+        }
+        break;
+    case 34: /* page down */
+        if (ev.ctrlKey) {
+            this.scroll_disp(this.h - 1);
+        } else {
+            str = "\x1b[6~";
+        }
+        break;
+    default:
+        if (ev.ctrlKey) {
+            /* ctrl + key */
+            if (ev.keyCode >= 65 && ev.keyCode <= 90) {
+                str = String.fromCharCode(ev.keyCode - 64);
+            } else if (ev.keyCode == 32) {
+                str = String.fromCharCode(0);
+            }
+        } else if ((!this.is_mac && ev.altKey) ||
+                   (this.is_mac && ev.metaKey)) {
+            /* meta + key (Note: we only send lower case) */
+            if (ev.keyCode >= 65 && ev.keyCode <= 90) {
+                str = "\x1b" + String.fromCharCode(ev.keyCode + 32);
+            }
+        }
+        break;
+    }
+    //    console.log("keydown: keycode=" + ev.keyCode + " charcode=" + ev.charCode + " str=" + str + " ctrl=" + ev.ctrlKey + " alt=" + ev.altKey + " meta=" + ev.metaKey);
+    if (str) {
+        if (ev.stopPropagation)
+            ev.stopPropagation();
+        if (ev.preventDefault)
+            ev.preventDefault();
+
+        this.show_cursor();
+        this.key_rep_state = 1;
+        this.key_rep_str = str;
+        this.handler(str);
+        return false;
+    } else {
+        this.key_rep_state = 0;
+        return true;
+    }
+};
+
+Term.prototype.pasteHandler_keyup = function (ev)
+{
+    this.interceptBrowserExit(ev);
 };
 
 Term.prototype.blurHandler = function (ev)

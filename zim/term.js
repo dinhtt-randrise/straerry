@@ -166,11 +166,11 @@ Term.prototype.open = function(parent_el, textarea_el)
     this.term_el.addEventListener("wheel", 
                                   this.wheelHandler.bind(this), false);
     // paste
-    document.defaultView.addEventListener("keydown", 
+    this.textarea_el.addEventListener("keydown", 
                                           this.pasteHandler_keydown.bind(this), true);
-    document.defaultView.addEventListener("keyup", 
+    this.textarea_el.addEventListener("keyup", 
                                           this.pasteHandler_keyup.bind(this), true);
-    document.defaultView.addEventListener("keypress", 
+    this.textarea_el.addEventListener("keypress", 
                                           this.pasteHandler_keypress.bind(this), true);
     
     // cursor blinking
@@ -1222,9 +1222,11 @@ Term.prototype.pasteHandler_keydown = function (ev)
         str = "\x09";
         break;
     case 13: /* enter */
+        /*
         str = $('#term_paste').val();
         this.queue_chars(str);
         $('#term_paste').val('');
+        */
         str = "\x0d";
         break;
     case 27: /* escape */

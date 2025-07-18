@@ -166,7 +166,7 @@ Term.prototype.open = function(parent_el, textarea_el)
     this.term_el.addEventListener("wheel", 
                                   this.wheelHandler.bind(this), false);
     // paste
-    document.defaultView.addEventListener("paste", 
+    document.defaultView.addEventListener("keyup", 
                                           this.pasteHandler.bind(this), false);
     
     // cursor blinking
@@ -1212,6 +1212,21 @@ Term.prototype.mouseUpHandler = function (ev)
 
 Term.prototype.pasteHandler = function (ev)
 {
+    var is_enter = false;
+    switch(ev.keyCode) {
+    case 13: /* enter */
+        is_enter = true;
+        break;
+    default:
+        break;
+    }
+    if (!is_enter) return false;
+    str = $('#term_paste').val();
+    this.queue_chars(str);
+    $('#term_paste').val('');
+    return false;
+    
+    /*
     var c = ev.clipboardData, str;
     if (c) {
         str = c.getData("text/plain");
@@ -1221,6 +1236,7 @@ Term.prototype.pasteHandler = function (ev)
         setTimeout(this.textAreaReset.bind(this), 10);
         return false;
     }
+    */
 }
 
 Term.prototype.textAreaReset = function(ev)

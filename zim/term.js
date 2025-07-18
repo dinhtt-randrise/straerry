@@ -166,12 +166,8 @@ Term.prototype.open = function(parent_el, textarea_el)
     this.term_el.addEventListener("wheel", 
                                   this.wheelHandler.bind(this), false);
     // paste
-    this.textarea_el.addEventListener("keydown", 
-                                          this.pasteHandler_keydown.bind(this), true);
-    this.textarea_el.addEventListener("keyup", 
-                                          this.pasteHandler_keyup.bind(this), true);
-    this.textarea_el.addEventListener("keypress", 
-                                          this.pasteHandler_keypress.bind(this), true);
+    document.defaultView.addEventListener("paste", 
+                                          this.pasteHandler.bind(this), false);
     
     // cursor blinking
     term = this;
@@ -1161,37 +1157,6 @@ Term.prototype.keyPressHandler = function (ev)
     }
 };
 
-Term.prototype.pasteHandler_keypress = function (ev)
-{
-    const keyupEvent = new KeyboardEvent('keypress', ev);
-    this.term_el.dispatchEvent(keyupEvent);
-    return true;
-};
-
-Term.prototype.pasteHandler_keydown = function (ev)
-{
-    var is_enter = false;
-    switch(ev.keyCode) {
-    case 13: /* enter */
-        is_enter = true;
-        break;
-    const keyupEvent = new KeyboardEvent('keydown', ev);
-    this.term_el.dispatchEvent(keyupEvent);
-
-    if (is_enter) {
-        $('#term_paste').val('');
-    }
-            
-    return true;
-};
-
-Term.prototype.pasteHandler_keyup = function (ev)
-{
-    const keyupEvent = new KeyboardEvent('keyup', ev);
-    this.term_el.dispatchEvent(keyupEvent);
-    return true;
-};
-
 Term.prototype.blurHandler = function (ev)
 {
     /* allow unloading the page */
@@ -1247,21 +1212,6 @@ Term.prototype.mouseUpHandler = function (ev)
 
 Term.prototype.pasteHandler = function (ev)
 {
-    var is_enter = false;
-    switch(ev.keyCode) {
-    case 13: /* enter */
-        is_enter = true;
-        break;
-    default:
-        break;
-    }
-    if (!is_enter) return false;
-    str = $('#term_paste').val();
-    this.queue_chars(str);
-    $('#term_paste').val('');
-    return false;
-    
-    /*
     var c = ev.clipboardData, str;
     if (c) {
         str = c.getData("text/plain");
@@ -1271,7 +1221,6 @@ Term.prototype.pasteHandler = function (ev)
         setTimeout(this.textAreaReset.bind(this), 10);
         return false;
     }
-    */
 }
 
 Term.prototype.textAreaReset = function(ev)

@@ -1,16 +1,15 @@
 <html>
 <head>
   <title>Straerry: Offline Knowledge Explorer</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-  <script crossorigin="anonymous" integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" src="./jquery-3.7.1.min.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'nonce-2726c7f26c' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <script nonce="2726c7f26c" src="./jquery-3.7.1.min.js"></script>
   <script>
 var UID = false;
     
 function addScript( src ) {
   var s = document.createElement( 'script' );
   s.setAttribute( 'src', src );
-  s.setAttribute( 'integrity', 'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC' );
-  s.setATtribute( 'crossorigin', 'anonymous' );
+  s.setAttribute( 'nonce', '2726c7f26c );
   document.body.appendChild( s );
 }
     

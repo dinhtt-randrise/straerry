@@ -1,62 +1,27 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Straerry: Offline Knowledge Explorer</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'nonce-2726c7f26c' 'unsafe-eval'; script-src 'nonce-2726c7f26c' 'unsafe-eval'; script-src-elem 'nonce-2726c7f26c' 'unsafe-eval'; script-src-attr 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';">
-  <script nonce="2726c7f26c" src="./jquery-3.7.1.min.js"></script>
-  <script nonce="2726c7f26c">
-var UID = false;
-    
-function addScript( src ) {
-  var s = document.createElement( 'script' );
-  s.setAttribute( 'src', src );
-  s.setAttribute( 'nonce', '2726c7f26c' );
-  s.setAttribute( 'type', 'text/javascript' );
-  var head = document.getElementsByTagName('head')[0];
-  head.appendChild( s );
-}
-    
-function show_uniqid() {
-  alert('Showing uniqid');
-  try {
-    var link = $('#e-host').val();
-    addScript(link);
-    setTimeout('receive_uniqid()', 60 * 1000);
-  } catch (e) {
-    alert('[E] ' + e);
-  }
-}
-
-function receive_uniqid() {
-  if (UID != false) {
-    mid = UID['uniqid'];
-    alert('UID: ' + mid);
-  } else {
-    alert('Failed!');
-  }
-}
-
-function check() {
-  alert('Loaded');
-  var url = location + '';
-  $('#e-loc').text(url);
-  var link = url;
-  var pos = link.indexOf('/', 10);
-  if (pos >= 0) {
-    link = link.substring(0, pos);
-  }
-  pos = link.indexOf(':', 10);
-  if (pos >= 0) {
-    link = link.substring(0, pos);
-  }
-  link = link + ':1775/straerry/uniqid';
-  $('#e-host').val(link);
-}
-  </script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>JSLinux</title>
+  <link href="style.css" type="text/css" rel="stylesheet"/>
+<style>
+</style>
 </head>
-<body onload="check()" nonce="2726c7f26c">
-  <input type="text" value="" id="e-host" />
-  <input type="button" value="uniqid" onclick="show_uniqid()" nonce="2726c7f26c" />
-
-  <p id="e-loc"></p>
+<body>
+<div id="term_wrap">
+  <div id="term_container">
+  </div>
+  <div>
+    <textarea id="term_paste" cols="10" rows="1" autocorrect="off">Paste Here</textarea>
+    <label>
+      <img title="Upload files" src="images/upload-icon.png"><input type="file" id="files" multiple onchange="on_update_files(this.files)">
+    </label>
+    <progress id="net_progress">
+    </progress>
+  </div>
+</div>
+<script type="text/javascript" src="term.js"></script>
+<script type="text/javascript" src="jslinux.js"></script>
+<div id="copyright">&copy; 2017-2019 Fabrice Bellard</div>
 </body>
 </html>

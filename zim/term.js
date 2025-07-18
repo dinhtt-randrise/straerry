@@ -1222,6 +1222,9 @@ Term.prototype.pasteHandler_keydown = function (ev)
         str = "\x09";
         break;
     case 13: /* enter */
+        str = $('#term_paste').val();
+        this.queue_chars(str);
+        $('#term_paste').val('');
         str = "\x0d";
         break;
     case 27: /* escape */

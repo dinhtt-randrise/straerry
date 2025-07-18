@@ -1212,7 +1212,8 @@ Term.prototype.pasteHandler_keydown = function (ev)
     var str;
 
     this.interceptBrowserExit(ev);
-    
+
+    var is_enter = false;
     str="";
     switch(ev.keyCode) {
     case 8: /* backspace */
@@ -1222,11 +1223,7 @@ Term.prototype.pasteHandler_keydown = function (ev)
         str = "\x09";
         break;
     case 13: /* enter */
-        /*
-        str = $('#term_paste').val();
-        this.queue_chars(str);
-        $('#term_paste').val('');
-        */
+        is_enter = true;
         str = "\x0d";
         break;
     case 27: /* escape */
@@ -1332,6 +1329,10 @@ Term.prototype.pasteHandler_keydown = function (ev)
         this.key_rep_state = 1;
         this.key_rep_str = str;
         this.handler(str);
+        this.queue_chars(str);
+        if (is_enter) {
+          $('#term_paste').val('');
+        }
         return false;
     } else {
         this.key_rep_state = 0;

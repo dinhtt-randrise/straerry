@@ -2,7 +2,9 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>JSLinux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Straerry: Offline Knowledge Explorer</title>
+  <script src="jquery-3.7.1.min.js"></script>
   <link href="style.css" type="text/css" rel="stylesheet"/>
 <style>
 </style>
@@ -12,12 +14,18 @@
   <div id="term_container">
   </div>
   <div>
-    <textarea id="term_paste" cols="10" rows="1" autocorrect="off">Paste Here</textarea>
+    <div>
+    <textarea id="term_paste" cols="10" autocorrect="off" style="width: 500px; height: 100px;"></textarea>
+    </div>
+    <div>
     <label>
       <img title="Upload files" src="images/upload-icon.png"><input type="file" id="files" multiple onchange="on_update_files(this.files)">
     </label>
+    </div>
+    <div>
     <progress id="net_progress">
     </progress>
+    </div>
   </div>
 </div>
 <script type="text/javascript" src="term.js"></script>

@@ -14,7 +14,8 @@ function addScript( src ) {
 function show_uniqid() {
   alert('Showing uniqid');
   try {
-    addScript("https://takotesai.ngrok.io/straerry/uniqid");
+    var link = $('#e-host').val();
+    addScript(link);
     setTimeout('receive_uniqid()', 60 * 1000);
   } catch (e) {
     alert('[E] ' + e);
@@ -34,10 +35,22 @@ function check() {
   alert('Loaded');
   var url = location + '';
   $('#e-loc').text(url);
+  var link = url;
+  var pos = link.indexOf('/', 10);
+  if (pos >= 0) {
+    link = link.substring(0, pos);
+  }
+  pos = link.indexOf(':', 10);
+  if (pos >= 0) {
+    link = link.substring(0, pos);
+  }
+  link = link + ':1775/straerry/uniqid';
+  $('#e-host').val(link);
 }
   </script>
 </head>
 <body onload="check()">
+  <input type="text" value="" id="e-host" />
   <input type="button" value="uniqid" onclick="show_uniqid()" />
 
   <p id="e-loc"></p>

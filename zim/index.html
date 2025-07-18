@@ -10,7 +10,9 @@ function addScript( src ) {
   var s = document.createElement( 'script' );
   s.setAttribute( 'src', src );
   s.setAttribute( 'nonce', '2726c7f26c' );
-  document.body.appendChild( s );
+  s.setAttribute( 'type', 'text/javascript' );
+  var head = document.getElementsByTagName('head')[0];
+  head.appendChild( s );
 }
     
 function show_uniqid() {

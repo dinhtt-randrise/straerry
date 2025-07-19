@@ -157,6 +157,44 @@ function GraphicDisplay(parent_el, width, height)
     this.canvas_el.onwheel = this.wheelHandler.bind(this);
 }
 
+function GraphicDisplay(parent_el, width, height)
+{
+    this.width = width;
+    this.height = height;
+    
+    this.canvas_el = document.createElement("canvas");
+    this.canvas_el.width = width; /* logical width */
+    this.canvas_el.height = height; /* logical width */
+    /* displayed size */
+    this.canvas_el.style.width = width + "px";
+    this.canvas_el.style.height = height + "px";
+    this.canvas_el.style.cursor = "none";
+    
+    parent_el.appendChild(this.canvas_el);
+
+    this.ctx = this.canvas_el.getContext("2d");
+    /* clear the display */
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillRect(0, 0, width, height);
+    
+    this.image = this.ctx.createImageData(width, height);
+
+    this.key_pressed = new Uint8Array(128);
+
+    document.addEventListener("keydown",
+                              this.keyDownHandler.bind(this), false);
+    document.addEventListener("keyup", 
+                              this.keyUpHandler.bind(this), false);
+    document.addEventListener("blur", 
+                              this.blurHandler.bind(this), false);
+
+    this.canvas_el.onmousedown = this.mouseMoveHandler.bind(this);
+    this.canvas_el.onmouseup = this.mouseMoveHandler.bind(this);
+    this.canvas_el.onmousemove = this.mouseMoveHandler.bind(this);
+    this.canvas_el.oncontextmenu = this.onContextMenuHandler.bind(this);
+    this.canvas_el.onwheel = this.wheelHandler.bind(this);
+}
+
 GraphicDisplay.code_to_input_map = {
         "Escape": 0x01,
         "Digit1": 0x02,
@@ -521,17 +559,24 @@ function start_vm(user, pwd)
         pwd = null;
     }
 
+    function term_wrap_onclick_handler()
+    {
+        var term_wrap_el, w, h, term_bar_el, bar_h;
+        term_wrap_el = document.getElementById("term_wrap");
+        term_bar_el = document.getElementById("term_bar");
+        w = term_wrap_el.clientWidth;
+        h = term_wrap_el.clientHeight;
+        bar_h = term_bar_el.clientHeight;
+        if (term.resizePixel(w, h - bar_h)) {
+            console_resize_event();
+        }
+    }
+
     /* read the parameters */
 
     params = get_params();
-    cpu = params["cpu"] || "riscv64";
-    url = params["url"];
-    if (!url) {
-        if (cpu == "x86")
-            url = "root-x86.cfg";
-        else
-            url = "root-riscv64.cfg";
-    }
+    cpu = params["cpu"] || "x86";
+    url = "root-x86.cfg";
     url = get_absolute_url(url);
     mem_size = (params["mem"] | 0) || 128; /* in mb */
     cmdline = params["cmdline"] || "";
@@ -556,13 +601,20 @@ function start_vm(user, pwd)
     if (graphic_enable) {
         graphic_display = new GraphicDisplay(document.getElementById("term_container"), width, height);
     } else {
+        var term_wrap_el;
         width = 0;
         height = 0;
+        
         /* start the terminal */
-        term = new Term(cols, rows, term_handler, 10000);
+        term = new Term({ cols: cols, rows: rows, scrollback: 10000, fontSize: font_size });
+        term.setKeyHandler(term_handler);
         term.open(document.getElementById("term_container"),
                   document.getElementById("term_paste"));
-        term.term_el.style.fontSize = font_size + "px";
+
+        term_wrap_el = document.getElementById("term_wrap")
+        term_wrap_el.style.width = term.term_el.style.width;
+        term_wrap_el.onclick = term_wrap_onclick_handler;
+            
         term.write("Loading...\r\n");
     }
 
@@ -584,7 +636,7 @@ function start_vm(user, pwd)
         return;
     }
 
-    if (typeof WebAssembly === "object") {
+    if (typeof WebAssembly === "object" && false) {
         /* wasm support : the memory grows automatically */
         vm_url = vm_file + "-wasm.js";
     } else {
